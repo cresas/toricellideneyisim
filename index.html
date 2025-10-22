@@ -19,10 +19,9 @@
 
         /* Header */
         .header {
-           
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
             padding: 16px;
-            border-bottom: 2px solid rgba(125, 211, 252, 0.6)
+            border-bottom: 2px solid rgba(125, 211, 252, 0.6);
         }
 
         .header h1 {
@@ -69,8 +68,7 @@
             position: relative;
             height: 100%;
             z-index: 10;
-			background: rgba(255, 255, 255, 0.2);
-			22px solid rgba(125, 211, 252, 0.6)
+            background: rgba(255, 255, 255, 0.2);
         }
 
         /* Control Panel */
@@ -86,6 +84,8 @@
             border: 1px solid rgba(255,255,255,0.8);
             padding: 16px;
             min-width: 280px;
+            max-height: calc(100vh - 120px);
+            overflow-y: auto;
         }
 
         .control-section {
@@ -110,7 +110,14 @@
             margin-bottom: 16px;
         }
 
-        .altitude-btn {
+        .tube-type-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .altitude-btn, .tube-type-btn {
             padding: 8px 12px;
             border: 1px solid #d1d5db;
             border-radius: 6px;
@@ -122,7 +129,7 @@
             transition: all 0.2s;
         }
 
-        .altitude-btn:hover {
+        .altitude-btn:hover, .tube-type-btn:hover {
             background: #f3f4f6;
         }
 
@@ -130,6 +137,38 @@
             background: #2563eb;
             border-color: #2563eb;
             color: white;
+        }
+
+        .altitude-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .altitude-btn:disabled:hover {
+            background: white;
+        }
+
+        .altitude-btn.active:disabled:hover {
+            background: #2563eb;
+        }
+
+        .tube-type-btn.active {
+            background: #2563eb;
+            border-color: #2563eb;
+            color: white;
+        }
+
+        .tube-type-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .tube-type-btn:disabled:hover {
+            background: white;
+        }
+
+        .tube-type-btn.active:disabled:hover {
+            background: #2563eb;
         }
 
         .start-btn {
@@ -189,7 +228,6 @@
         /* Mercury Basin */
         .mercury-basin {
             position: relative;
-			  margin top : 200px;
         }
 
         .glass-container {
@@ -200,9 +238,7 @@
             border-radius: 12px;
             margin: 0 auto;
             backdrop-filter: blur(4px);
-		  
             position: relative;
-		
         }
 
         .mercury-in-basin {
@@ -238,7 +274,7 @@
         /* Tube Assembly */
         .tube-assembly {
             position: absolute;
-            left: 50%;
+            left: 40%;
             bottom: 56px;
             transform: translateX(-50%);
             display: flex;
@@ -250,7 +286,7 @@
         .glass-tube {
             position: relative;
             width: 48px;
-            height: 800px; /* 100cm * 8px = 800px */
+            height: 800px;
             background: linear-gradient(to right, 
                 rgba(125, 211, 252, 0.4) 0%,
                 rgba(255, 255, 255, 0.6) 50%,
@@ -260,6 +296,24 @@
             backdrop-filter: blur(4px);
             box-shadow: 0 8px 32px rgba(59, 130, 246, 0.2);
             overflow: hidden;
+            transition: all 0.5s ease;
+        }
+
+        /* Tube Type: Thicker */
+        .glass-tube.thicker {
+            width: 72px;
+            border-width: 3px;
+        }
+
+        /* Tube Type: Diagonal */
+        .glass-tube.diagonal {
+            transform: skewX(15deg) translateX(-90px);
+            width: 48px;
+        }
+        
+        /* Move pressure equation when diagonal tube is active */
+        .tube-assembly.diagonal-active .pressure-equation {
+            transform: translateX(-120px);
         }
 
         /* Mercury Column */
@@ -312,26 +366,18 @@
             left: 0;
             right: 0;
             border-top: 1px solid rgba(146, 64, 14, 0.5);
-	
-
-
-
-
         }
 
         .scale-number {
             position: absolute;
             left: 100%;
             margin-left: 4px;
-			margin-top : -15px;
-         font-size: 15px;
-    font-weight: bold;
-    color: #2563eb;
-    -webkit-text-stroke: 2px white;
-    paint-order: stroke fill;
-		 
-
-
+            margin-top: -15px;
+            font-size: 15px;
+            font-weight: bold;
+            color: #2563eb;
+            -webkit-text-stroke: 2px white;
+            paint-order: stroke fill;
         }
 
         /* Red Indicator Line */
@@ -347,8 +393,8 @@
 
         .pressure-value-display {
             position: absolute;
-            left: 100%;
-            margin-left: 40px;
+            right: 100%;
+            margin-right: 40px;
             top: -15px;
             background: #ef4444;
             color: white;
@@ -419,13 +465,6 @@
             background: linear-gradient(to bottom, #1e40af, #1e3a8a, #60a5fa);
         }
 
-        /* CSS Variables for theming */
-        :root {
-            --primary: 37 99 235;
-            --card: 255 255 255;
-            --border: 229 231 235;
-        }
-
         /* Hidden class */
         .hidden {
             display: none !important;
@@ -436,6 +475,116 @@
             width: 16px;
             height: 16px;
             fill: currentColor;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 20px;
+            }
+
+            .control-panel {
+                position: fixed;
+                left: 8px;
+                top: 70px;
+                min-width: 200px;
+                max-width: 220px;
+                padding: 10px;
+                max-height: calc(100vh - 160px);
+                font-size: 12px;
+            }
+
+            .section-title {
+                font-size: 12px;
+            }
+
+            .altitude-btn, .tube-type-btn {
+                padding: 6px 10px;
+                font-size: 12px;
+            }
+
+            .start-btn {
+                padding: 10px 14px;
+                font-size: 14px;
+            }
+
+            .pressure-value {
+                font-size: 20px;
+            }
+
+            .info-value {
+                font-size: 14px;
+            }
+
+            .simulation-area {
+                transform: translateX(-20%) scale(0.7);
+                transform-origin: bottom center;
+                right: 0;
+            }
+
+            .footer-info {
+                bottom: 8px;
+                left: 8px;
+                right: auto;
+                padding: 8px 12px;
+            }
+
+            .footer-text {
+                font-size: 10px;
+            }
+
+            .pressure-equation {
+                left: auto;
+                right: -60px;
+            }
+
+            .equation-text {
+                font-size: 16px;
+            }
+
+            .equation-label {
+                font-size: 10px;
+            }
+            
+            /* On mobile, reset the pressure equation transform */
+            .tube-assembly.diagonal-active .pressure-equation {
+                transform: none;
+            }
+			
+			
+			  /* Tube Type: Diagonal */
+        .glass-tube.diagonal {
+            transform: skewX(8deg) translateX(-40px);
+            width: 48px;
+        }
+		
+        }
+
+        @media (max-width: 480px) {
+            .control-panel {
+                min-width: 180px;
+                max-width: 190px;
+                padding: 8px;
+            }
+
+            .simulation-area {
+                transform: translateX(-15%) scale(0.55);
+                right: -20px;
+            }
+
+            .altitude-buttons {
+                grid-template-columns: 1fr;
+            }
+
+            .section-title {
+                font-size: 11px;
+            }
+			
+			  /* Tube Type: Diagonal */
+        .glass-tube.diagonal {
+            transform: skewX(8deg) translateX(-40px);
+            width: 48px;
+        }
         }
     </style>
 </head>
@@ -457,6 +606,16 @@
         <div class="content">
             <!-- Control Panel -->
             <div class="control-panel">
+                <!-- Tube Type Selection -->
+                <div class="control-section">
+                    <h3 class="section-title">Deney Tüpü Çeşidi</h3>
+                    <div class="tube-type-buttons">
+                        <button class="tube-type-btn active" data-tube-type="normal">Normal Tüp</button>
+                        <button class="tube-type-btn" data-tube-type="thicker">Daha Kalın Tüp</button>
+                        <button class="tube-type-btn" data-tube-type="diagonal">Çarpraz Tüp</button>
+                    </div>
+                </div>
+
                 <!-- Altitude Controls -->
                 <div class="control-section">
                     <h3 class="section-title">Yükseklik (m)</h3>
@@ -479,9 +638,9 @@
                 </div>
 
                 <!-- Pressure Display -->
-                <div class="control-section pressure-display hidden" id="pressureSection">
-                    <h3 class="section-title">Basınç</h3>
-                    <div class="pressure-value" id="pressureValue">76 cm·Hg</div>
+                <div class="control-section pressure-display hidden" id="pressureSection" style="display: none;">
+                    <h3 class="section-title" id="pressureTitle">Basınç</h3>
+                    <div class="pressure-value" id="pressureValue"></div>
                 </div>
 
                 <!-- Temperature Display -->
@@ -532,7 +691,7 @@
                     <!-- Tube Assembly -->
                     <div class="tube-assembly">
                         <!-- Glass Tube -->
-                        <div class="glass-tube">
+                        <div class="glass-tube" id="glassTube">
                             <!-- Mercury Column -->
                             <div class="mercury-column" id="mercuryColumn" style="height: 800px;">
                                 <div class="mercury-shine"></div>
@@ -601,6 +760,7 @@
         const backgroundImage = document.getElementById('backgroundImage');
         const gradientOverlay = document.getElementById('gradientOverlay');
         const altitudeButtons = document.querySelectorAll('.altitude-btn');
+        const tubeTypeButtons = document.querySelectorAll('.tube-type-btn');
         const startBtn = document.getElementById('startBtn');
         const startSection = document.getElementById('startSection');
         const pressureSection = document.getElementById('pressureSection');
@@ -609,14 +769,21 @@
         const mercuryColumn = document.getElementById('mercuryColumn');
         const vacuumSpace = document.getElementById('vacuumSpace');
         const ruler = document.getElementById('ruler');
+        const glassTube = document.getElementById('glassTube');
 
         // State
         let selectedPreset = altitudePresets[0];
         let measurementStarted = false;
+        let selectedTubeType = 'normal';
 
         // Initialize
         function init() {
             createRulerMarks();
+            
+            // Ensure pressure section is hidden and empty at start
+            pressureSection.style.display = 'none';
+            pressureValue.textContent = '';
+            
             updateDisplay();
         }
 
@@ -661,7 +828,7 @@
             // Update current altitude display
             currentAltitude.textContent = `${selectedPreset.altitude} metre`;
             
-            // Calculate mercury height
+            // Calculate mercury height (values remain the same regardless of tube type)
             const displayPressure = measurementStarted ? selectedPreset.pressure : 100;
             const mercuryHeightPx = displayPressure * PX_PER_CM;
             const vacuumHeightPx = TUBE_HEIGHT - mercuryHeightPx;
@@ -677,20 +844,60 @@
                 indicator.style.top = vacuumHeightPx + 'px';
                 valueDisplay.textContent = `${displayPressure} cm`;
             }
-            
-            // Update pressure value in control panel
-            pressureValue.textContent = `${displayPressure} cm·Hg`;
         }
+
+        // Handle tube type button clicks
+        tubeTypeButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                // Don't allow changes during measurement
+                if (measurementStarted) {
+                    return;
+                }
+
+                selectedTubeType = button.dataset.tubeType;
+                
+                // Update active button
+                tubeTypeButtons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+                
+                // Get tube assembly element
+                const tubeAssembly = document.querySelector('.tube-assembly');
+                
+                // Update tube appearance
+                glassTube.className = 'glass-tube';
+                tubeAssembly.classList.remove('diagonal-active');
+                
+                if (selectedTubeType === 'thicker') {
+                    glassTube.classList.add('thicker');
+                } else if (selectedTubeType === 'diagonal') {
+                    glassTube.classList.add('diagonal');
+                    tubeAssembly.classList.add('diagonal-active');
+                }
+                
+                // Hide pressure display when tube type changes
+                pressureSection.classList.add('hidden');
+                pressureSection.style.display = 'none';
+            });
+        });
 
         // Handle altitude button clicks
         altitudeButtons.forEach(button => {
             button.addEventListener('click', () => {
+                // Prevent altitude change during measurement
+                if (measurementStarted) {
+                    return;
+                }
+                
                 const altitude = parseInt(button.dataset.altitude);
                 const preset = altitudePresets.find(p => p.altitude === altitude);
                 
                 if (preset) {
                     selectedPreset = preset;
                     measurementStarted = false;
+                    
+                    // Re-enable tube type buttons and altitude buttons
+                    tubeTypeButtons.forEach(btn => btn.disabled = false);
+                    altitudeButtons.forEach(btn => btn.disabled = false);
                     
                     // Update active button
                     altitudeButtons.forEach(btn => btn.classList.remove('active'));
@@ -699,6 +906,7 @@
                     // Show start button, hide pressure display
                     startSection.classList.remove('hidden');
                     pressureSection.classList.add('hidden');
+                    pressureSection.style.display = 'none';
                     
                     // Add fast transition class for immediate response
                     mercuryColumn.classList.add('fast');
@@ -717,11 +925,45 @@
         startBtn.addEventListener('click', () => {
             measurementStarted = true;
             
-            // Hide start button, show pressure display
-            startSection.classList.add('hidden');
+            // Disable the start button and change text to "Ölçülüyor..."
+            startBtn.disabled = true;
+            startBtn.innerHTML = `
+                <svg class="play-icon" viewBox="0 0 24 24">
+                    <polygon points="6 3 20 12 6 21 6 3"></polygon>
+                </svg>
+                Ölçülüyor...
+            `;
+            
+            // Disable tube type buttons and altitude buttons during measurement
+            tubeTypeButtons.forEach(btn => btn.disabled = true);
+            altitudeButtons.forEach(btn => btn.disabled = true);
+            
+            // Set the pressure value before showing it
+            pressureValue.textContent = `${selectedPreset.pressure} cm·Hg`;
+            
+            // Show pressure display
             pressureSection.classList.remove('hidden');
+            pressureSection.style.display = 'block';
             
             updateDisplay();
+            
+            // Re-enable buttons after measurement animation completes (2 seconds)
+            setTimeout(() => {
+                measurementStarted = false;
+                tubeTypeButtons.forEach(btn => btn.disabled = false);
+                altitudeButtons.forEach(btn => btn.disabled = false);
+                
+                // Reset start button text and re-enable it
+                startBtn.disabled = false;
+                startBtn.innerHTML = `
+                    <svg class="play-icon" viewBox="0 0 24 24">
+                        <polygon points="6 3 20 12 6 21 6 3"></polygon>
+                    </svg>
+                    Ölçüme Başla
+                `;
+                
+                // Keep pressure display visible (don't hide it)
+            }, 2000);
         });
 
         // Initialize the simulation
